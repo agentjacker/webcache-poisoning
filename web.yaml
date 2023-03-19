@@ -1,0 +1,36 @@
+id: webcache-poisoning-check
+info:
+  name: Web Cache Poisoning Check
+  author: [Your Name Here]
+  severity: medium
+  description: |
+    This template checks for web cache poisoning vulnerabilities by injecting cache-control headers and checking if the injected headers are reflected in subsequent responses. The template sends GET requests with different cache-control headers to the target and checks if the server returns different responses for each header.
+
+requests:
+- method: GET
+  path: /
+  headers:
+    Cache-Control: no-cache
+  matchers-condition: and
+  matchers:
+    - status: 200
+    - without-string:
+        - "Cache-Control: no-cache"
+- method: GET
+  path: /
+  headers:
+    Cache-Control: no-store
+  matchers-condition: and
+  matchers:
+    - status: 200
+    - without-string:
+        - "Cache-Control: no-store"
+- method: GET
+  path: /
+  headers:
+    Cache-Control: public, max-age=31536000
+  matchers-condition: and
+  matchers:
+    - status: 200
+    - without-string:
+        - "Cache-Control: public, max-age=31536000"
